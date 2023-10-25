@@ -1,5 +1,5 @@
 build:
-	docker-compose --profile gpu
+	docker-compose --profile gpu build
 
 run:
 	docker-compose up -d
