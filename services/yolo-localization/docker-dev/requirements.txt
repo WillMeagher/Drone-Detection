@@ -1,0 +1,3 @@
+ipykernel
+flask
+ultralytics
