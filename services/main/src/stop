@@ -1,0 +1,4 @@
+#!/bin/bash
+
+pkill -15 flask
+exit 0

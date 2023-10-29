@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Drone Detection</title>
+    <!-- Include Bootstrap CSS (you can replace this with a Bootstrap CDN URL) -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Custom CSS for the jumbotron */
+        .custom-jumbotron {
+            background-color: #f4f4f4; /* Set the background color */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add a drop shadow */
+            padding: 20px; /* Add some padding */
+            border-radius: 10px; /* Add rounded corners */
+        }
+        /* Style the annotated image with a maximum width and height */
+        .annotated-image {
+            max-width: 100%; /* Adjust the maximum width as needed */
+            max-height: 80vh; /* Adjust the maximum height as needed */
+        }
+    </style>
+</head>
+<body>
+    <div class="d-flex justify-content-center align-items-center min-vh-100">
+        <div class="custom-jumbotron">
+            <h1 class="display-4 text-primary">Drone Detection</h1>
+            <form action="/upload" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="image">Upload Image</label>
+                    <input type="file" name="image" accept="image/*" class="form-control-file" id="imageInput">
+                </div>
+                <!-- Image Preview -->
+                <div class="text-center">
+                    <img id="imagePreview" src="#" alt="Image Preview" style="max-width: 100%; max-height: 200px; display: none;">
+                </div>
+                <button type="submit" class="btn btn-primary">Upload Image</button>
+            </form>
+            {% if annotated_image %}
+                <div class="text-center">
+                    <img src="{{ url_for('annotated_file', filename=annotated_image) }}" alt="Annotated Image" class="annotated-image">
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    <script>
+        // Display image preview when a file is selected
+        document.getElementById('imageInput').addEventListener('change', function() {
+            var imagePreview = document.getElementById('imagePreview');
+            imagePreview.style.display = 'block';
+            imagePreview.src = URL.createObjectURL(this.files[0]);
+        });
+    </script>
+</body>
+</html>

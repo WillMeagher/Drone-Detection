@@ -35,15 +35,6 @@ services:
     tty: true
     ports:
       - "5003:5000"
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu]
-    profiles:
-      - gpu
 
   clip-classifier:
     build: ./services/clip-classifier/docker-dev
@@ -53,12 +44,3 @@ services:
     tty: true
     ports:
       - "5004:5000"
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu]
-    profiles:
-      - gpu

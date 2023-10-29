@@ -1,0 +1,9 @@
+#!/bin/bash
+
+if [ -z "$1" ]; then
+  # regular
+  flask --app /app/src/app.py run -h 0.0.0.0 -p 5000 --debug
+else
+  # run quietly in the background
+  flask --app /app/src/app.py run -h 0.0.0.0 -p 5000 --debug >/dev/null 2>&1 &
+fi
