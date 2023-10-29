@@ -5,9 +5,11 @@ services:
     volumes:
       - ./services/main/src:/app/src
       - ./data:/app/data
+    env_file:
+      - ./.env
     tty: true
-    ports:
-      - "5000:5000"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   data-pipeline:
     build: ./services/data-pipeline/docker-dev
@@ -15,8 +17,6 @@ services:
       - ./services/data-pipeline/src:/app/src
       - ./data:/app/data
     tty: true
-    ports:
-      - "5001:5000"
 
   opencv-distorition:
     build: ./services/opencv-distorition/docker-dev
@@ -24,8 +24,6 @@ services:
       - ./services/opencv-distorition/src:/app/src
       - ./data:/app/data
     tty: true
-    ports:
-      - "5002:5000"
 
   yolo-localization:
     build: ./services/yolo-localization/docker-dev
@@ -33,8 +31,6 @@ services:
       - ./services/yolo-localization/src:/app/src
       - ./data:/app/data
     tty: true
-    ports:
-      - "5003:5000"
     deploy:
       resources:
         reservations:
@@ -51,8 +47,6 @@ services:
       - ./services/clip-classifier/src:/app/src
       - ./data:/app/data
     tty: true
-    ports:
-      - "5004:5000"
     deploy:
       resources:
         reservations:

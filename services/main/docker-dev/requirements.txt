@@ -1,2 +1,5 @@
 ipykernel
 flask
+opencv-python
+python-dotenv
+requests
