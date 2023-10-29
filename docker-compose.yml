@@ -30,6 +30,7 @@ services:
     volumes:
       - ./services/yolo-localization/src:/app/src
       - ./data:/app/data
+    entrypoint: ["python", "./src/app.py"]
     tty: true
     deploy:
       resources:
