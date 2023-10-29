@@ -1,6 +1,7 @@
 ipykernel
 flask
-pillow
 opencv-python
+python-dotenv
 requests
+pillow
 matplotlib
