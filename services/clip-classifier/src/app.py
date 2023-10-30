@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from easy_clip import Clip
 from PIL import Image
 import os
+import sys
 
 app = Flask(__name__)
 
@@ -85,18 +86,18 @@ def run():
                 weight_values[i].append(weight_v)
                 weight_indices[i].append(weight_i)
 
-    data = {}
+    data = []
     for i in range(len(type_values)):
-        data[all_imgs[i].filename] = []
+        data.append([])
         
         for j in range(len(type_values[i])):
-            data[all_imgs[i].filename].append({
+            data[i].append({
                 "type": {
-                    "value": type_values[i][j][0].item(),
+                    "conf": type_values[i][j][0].item(),
                     "label": TYPE_CLASSES[type_indices[i][j][0]]
                 },
                 "weight": {
-                    "value": weight_values[i][j][0].item(),
+                    "conf": weight_values[i][j][0].item(),
                     "label": WEIGHT_CLASSES[weight_indices[i][j][0]]
                 }
             })
@@ -108,4 +109,4 @@ def test():
     return 'Server is Live'
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5001)
+    app.run(host='0.0.0.0', port=5000)

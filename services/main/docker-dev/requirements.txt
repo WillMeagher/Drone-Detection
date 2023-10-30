@@ -3,3 +3,5 @@ flask
 opencv-python
 python-dotenv
 requests
+pillow
+matplotlib
