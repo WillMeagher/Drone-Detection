@@ -1,10 +1,5 @@
-import requests
 import os
-import json
 import cv2
-import numpy as np
-import uuid
-import time
 
 from tools import camera_client, speed_test, input_check
 from pipeline import pipeline
