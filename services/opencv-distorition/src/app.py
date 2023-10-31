@@ -1,6 +1,7 @@
 from flask import Flask, request
 import cv2
 import os
+import uuid
 
 # camera constants for distance calc
 CAM_FOCAL_LENGTH = 2000 #in pixels (roughly)
@@ -26,27 +27,41 @@ def run():
     # get json data
     json_data = request.get_json()
 
-    img_path_pairs = json_data.get('img_pairs', [])
+    img_paths = json_data.get('imgs', [])
+    in_place = json_data.get('in_place', False)
 
-    if img_path_pairs == []:
-        return "No image pairs provided", 400
+    if img_paths == []:
+        return "No images provided", 400
 
-    for img_pair in img_path_pairs:
-        if not (os.path.isfile(img_pair[0]) and os.path.isfile(img_pair[1])):
-            return f"Image Pair {img_pair} does not exist", 400
-        
-    for image_pair_path in img_path_pairs:
-        old_imgL = cv2.imread(image_pair_path[0])
-        old_imgR = cv2.imread(image_pair_path[1])
+    if len(img_paths) % 2 != 0:
+        return "Uneven number of images provided", 400
+
+    data = []
+
+    for i in range(0, len(img_paths), 2):
+        if not (os.path.isfile(img_paths[i]) and os.path.isfile(img_paths[i + 1])):
+            return f"Image {i} or {i + 1} does not exist", 400
+        old_imgL = cv2.imread(img_paths[i])
+        old_imgR = cv2.imread(img_paths[i + 1])
 
         imgL = cv2.remap(old_imgL, CAL_MAPS[0][0], CAL_MAPS[0][1], cv2.INTER_LANCZOS4, cv2.BORDER_CONSTANT, 0)
         imgR = cv2.remap(old_imgR, CAL_MAPS[1][0], CAL_MAPS[1][1], cv2.INTER_LANCZOS4, cv2.BORDER_CONSTANT, 0)
         
+        if in_place:
+            output_path_0 = img_paths[i]
+            output_path_1 = img_paths[i + 1]
+        else:
+            folder = os.path.dirname(img_paths[i])
+            output_path_0 = os.path.join(folder, str(uuid.uuid4()) + '.jpg')
+            output_path_1 = os.path.join(folder, str(uuid.uuid4()) + '.jpg')
+
         # rewrite the images with the undistorted versions
-        cv2.imwrite(image_pair_path[0], imgL)
-        cv2.imwrite(image_pair_path[1], imgR)
+        cv2.imwrite(output_path_0, imgL)
+        cv2.imwrite(output_path_1, imgR)
+
+        data.extend([output_path_0, output_path_1])
             
-    return "Images Undistorted", 200
+    return data
 
 
 @app.route("/test")
