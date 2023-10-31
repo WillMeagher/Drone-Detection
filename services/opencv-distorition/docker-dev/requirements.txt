@@ -2,7 +2,5 @@ ipykernel
 flask
 opencv-python
 numpy
-matplotlib
 requests
-python-dotenv
 pyYAML
