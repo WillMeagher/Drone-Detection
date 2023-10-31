@@ -11,10 +11,8 @@ ID_0 = int(os.getenv("CAM_ID_0"))
 ID_1 = int(os.getenv("CAM_ID_1"))
 HOST = os.getenv("HOST_HOST")
 
-server_socket_0 = None
-server_socket_1 = None
-cap_0 = None
-cap_1 = None
+server_socket_0, server_socket_1 = None, None
+cap_0, cap_1 = None, None
 
 def main():
     server_socket_0 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
