@@ -130,7 +130,18 @@ input[type=file]::file-selector-button:hover {
     font-size: 16px;
 }
 
-@media screen and (max-width: 1000px) {
+#latest-image {
+    max-width: 100%;
+    max-height: calc(100vh - 160px);
+}
+
+.live-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+@media screen and (max-width: 1042px) {
     .content {
         flex-direction: column;
     }

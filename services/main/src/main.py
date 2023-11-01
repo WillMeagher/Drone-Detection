@@ -1,5 +1,6 @@
 import os
 import cv2
+import requests
 
 from tools import camera_client, speed_test, input_check
 from pipeline import pipeline, pipeline_stereo
@@ -41,6 +42,11 @@ def main():
                     output_frame = pipeline([frame_0])[0]
 
                 cv2.imwrite(OUTPUT_FOLDER + "img.jpg", output_frame)
+                
+                # send the output frame
+                ret_, encoded_img = cv2.imencode('.jpg', output_frame)
+                img_string = encoded_img.tobytes()
+                requests.post('http://localhost:5000/frame', data=img_string)
 
                 frame_0, frame_1 = None, None
                 speed_tester.loop(print_loops=True)
