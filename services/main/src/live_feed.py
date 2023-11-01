@@ -3,6 +3,7 @@ import threading
 from tools import camera_client, speed_test
 from pipeline import pipeline, pipeline_stereo
 import cv2
+import requests
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -70,6 +71,10 @@ class LiveThread:
                 frame_0, frame_1 = None, None
 
                 cv2.imwrite(TEMP_FOLDER + IMAGE_NAME, output_frame)
+                
+                ret_, encoded_img = cv2.imencode('.jpg', output_frame)
+                img_string = encoded_img.tobytes()
+                requests.post('http://localhost:5000/get-feed', data=img_string)
 
 
 if __name__ == "__main__":

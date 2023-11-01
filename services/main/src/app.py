@@ -6,6 +6,7 @@ import cv2
 import uuid
 import imageio
 import time
+import json
 import os
 
 from pipeline import pipeline
@@ -22,6 +23,10 @@ FEED_IMAGE_NAME = os.getenv("FEED_FILE_NAME")
 os.makedirs(TEMP_FOLDER, exist_ok=True)
 feed = LiveThread()
 
+frame = b'\xff\xd8\xff\xe0\x00\x10JFIF\x00\x01\x01\x00\x00\x01\x00\x01\x00\x00\xff\xdb\x00C\x00\x02\x01\x01\x01\x01\x01\x02\x01\x01\x01\x02\x02\x02\x02\x02\x04\x03\x02\x02\x02\x02\x05\x04\x04\x03\x04\x06\x05\x06\x06\x06\x05\x06\x06\x06\x07\t\x08\x06\x07\t\x07\x06\x06\x08\x0b\x08\t\n\n\n\n\n\x06\x08\x0b\x0c\x0b\n\x0c\t\n\n\n\xff\xc0\x00\x0b\x08\x00\x01\x00\x01\x01\x01\x11\x00\xff\xc4\x00\x1f\x00\x00\x01\x05\x01\x01\x01\x01\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x01\x02\x03\x04\x05\x06\x07\x08\t\n\x0b\xff\xc4\x00\xb5\x10\x00\x02\x01\x03\x03\x02\x04\x03\x05\x05\x04\x04\x00\x00\x01}\x01\x02\x03\x00\x04\x11\x05\x12!1A\x06\x13Qa\x07"q\x142\x81\x91\xa1\x08#B\xb1\xc1\x15R\xd1\xf0$3br\x82\t\n\x16\x17\x18\x19\x1a%&\'()*456789:CDEFGHIJSTUVWXYZcdefghijstuvwxyz\x83\x84\x85\x86\x87\x88\x89\x8a\x92\x93\x94\x95\x96\x97\x98\x99\x9a\xa2\xa3\xa4\xa5\xa6\xa7\xa8\xa9\xaa\xb2\xb3\xb4\xb5\xb6\xb7\xb8\xb9\xba\xc2\xc3\xc4\xc5\xc6\xc7\xc8\xc9\xca\xd2\xd3\xd4\xd5\xd6\xd7\xd8\xd9\xda\xe1\xe2\xe3\xe4\xe5\xe6\xe7\xe8\xe9\xea\xf1\xf2\xf3\xf4\xf5\xf6\xf7\xf8\xf9\xfa\xff\xda\x00\x08\x01\x01\x00\x00?\x00\xfd\xfc\xaf\xff\xd9'
+
+
+
 @app.route('/')
 def index():
     return render_template('image.html')
@@ -35,7 +40,9 @@ def liveFeed():
 @app.route('/start_feed', methods=['POST', 'GET'])
 def start_feed():
     if not feed.is_running():
+        print(feed)
         feed.start_thread()
+        print(feed.is_running())
     return redirect(url_for('liveFeed'))
 
 
@@ -114,24 +121,24 @@ def upload_video():
 
         return render_template('video.html', video_filename=temp_filename)
 
-def get_frame():
+def get_frames():
+    global frame
     while True:
-        time.sleep(0.5)
-        frame = None
-        if feed.is_running():
-            frame = cv2.imread(TEMP_FOLDER + FEED_IMAGE_NAME)
-        if frame is None:
-            frame = cv2.imread('static/404.jpg')
-        yield (b'--frame\r\n'
-            b'Content-Type: image/jpeg\r\n\r\n' + open(TEMP_FOLDER + FEED_IMAGE_NAME, 'rb').read() + b'\r\n')
+        time.sleep(0.2)
+        yield (b'--frame\r\nContent-Type: text/plain\r\n\r\n' + frame + b'\r\n')
 
-@app.route('/get_feed')
+@app.route('/get-feed', methods=['GET', 'POST'])
 def get_feed():
-    response = Response(get_frame(), mimetype='multipart/x-mixed-replace; boundary=frame')
-    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
-    response.headers['Pragma'] = 'no-cache'
-    response.headers['Expires'] = '0'
-    return response
+    if request.method == 'GET':
+        response = Response(get_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
+        return response
+    else:
+        global frame
+        frame = request.data
+        return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
 
 @app.route('/file/<filename>')
 def serve_file(filename):
