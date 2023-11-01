@@ -16,18 +16,22 @@ os.makedirs(TEMP_FOLDER, exist_ok=True)
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('image.html')
+
+@app.route('/live_feed')
+def liveFeed():
+    return render_template('live_feed.html')
 
 
 @app.route('/upload_image', methods=['POST', 'GET'])
 def upload_image():
     if 'image' not in request.files:
-        return redirect(url_for('index'))
+        return render_template('image.html')
 
     image = request.files['image']
 
     if image.filename == '':
-        return redirect(url_for('index'))
+        return render_template('image.html')
 
     if image:
         # get uploaded image as opencv image
@@ -44,18 +48,18 @@ def upload_image():
             cv2.imwrite(file_path, img)
             image_files.append(temp_filename)
 
-        return render_template('index.html', annotated_image_files=image_files)
+        return render_template('image.html', annotated_image_files=image_files)
 
 
 @app.route('/upload_video', methods=['POST', 'GET'])
 def upload_video():
     if 'video' not in request.files:
-        return redirect(url_for('index'))
+        return render_template('video.html')
 
     video = request.files['video']
 
     if video.filename == '':
-        return redirect(url_for('index'))
+        return render_template('video.html')
 
     if video:
         # save video to temp folder
@@ -85,7 +89,7 @@ def upload_video():
             writer.append_data(np.array(pil_img))
         writer.close()
 
-        return render_template('index.html', video_filename=temp_filename)
+        return render_template('video.html', video_filename=temp_filename)
 
 
 @app.route('/file/<filename>')
@@ -95,4 +99,4 @@ def serve_file(filename):
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
+    app.run(debug=True, host='0.0.0.0', port=7007)

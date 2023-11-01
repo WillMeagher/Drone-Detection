@@ -1,0 +1,147 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #262626;
+    color: white;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #222;
+    text-align: center;
+    padding: 20px;
+}
+
+#logo-left {
+    /*float: inline-start;
+    */
+    width: 60px;
+    height: relative;
+    padding: 0px;
+    position: absolute;
+    top: 8px;
+    left: 20px;
+}
+
+#title {
+    display: inline;
+    margin: 0;
+}
+
+.content {
+    display: flex;
+    padding: 20px;
+    min-height: 400px;
+}
+
+nav {
+    background-color: #333;
+    width: 20%;
+    padding: 20px;
+    border: 1px solid #444;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 0;
+}
+
+.nav-item {
+    flex: 1;
+    padding: 10px;
+    display: block;
+    margin: 4px 0;
+    background-color: #444;
+    border: none;
+    color: white;
+    cursor: pointer;
+    outline: none;
+    text-decoration: none;
+    transition: background-color 0.3s;
+    flex-grow: 0;
+}
+
+.nav-item:hover,
+.nav-item.active {
+    background-color: #555;
+}
+
+main {
+    border: 1px solid #444;
+    flex-grow: 1;
+    padding: 20px;
+    min-height: 50vh;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+}
+
+.form-control-file {
+    background-color: #555;
+    border-radius: 0;
+    color: white;
+    border-radius: 2px;
+    margin: 4px 0;
+    width: 100%;
+}
+
+input[type=file]::file-selector-button {
+    margin-right: 20px;
+    border: none;
+    background: #444;
+    padding: 10px 20px;
+    color: #fff;
+    cursor: pointer;
+    transition: background .2s ease-in-out;
+    border-radius: 2px;
+}
+
+input[type=file]::file-selector-button:hover {
+    background: #484848;
+}
+
+.submit {
+    border: none;
+    background: #444;
+    padding: 10px 20px;
+    color: #fff;
+    cursor: pointer;
+    transition: background .2s ease-in-out;
+    border-radius: 2px;
+    width: 100%;
+    margin: 4px 0 20px 0;
+}
+
+.submit:hover {
+    background: #484848;
+}
+
+.preview-window, .result-window {
+    display: flex;
+    justify-content: center;
+}
+
+.results {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+@media screen and (max-width: 1000px) {
+    .content {
+        flex-direction: column;
+    }
+
+    nav {
+        width: 100%;
+        flex-direction: row;
+        gap: 20px;
+    }
+
+    .nav-item {
+        flex-grow: 1;
+    }
+}
