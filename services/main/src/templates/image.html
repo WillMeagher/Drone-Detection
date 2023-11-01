@@ -1,0 +1,40 @@
+{% set title='Drone Image Detector' %}
+{% include 'inc/header.html' %}
+
+<main>
+  {% if annotated_image_files %}
+  {% for image_filename in annotated_image_files %}
+  <div class="results">
+    Results
+  </div>
+  <div class="result-window">
+    <img src="{{ url_for('serve_file', filename=image_filename) }}" alt="Annotated Image" class="annotated-image"
+      style="max-width: 100%; max-height: 250px;">
+  </div>
+  {% endfor %}
+  {% endif %}
+
+  <form action="/upload_image" method="post" enctype="multipart/form-data">
+    <div class="form-group">
+      <label for="image">Select Image</label>
+      <input type="file" name="image" accept="image/*" class="form-control-file" id="imageInput" required>
+    </div>
+    <button type="submit" class="submit">Detect</button>
+    <!-- Image Preview -->
+    <div class="preview-window">
+      <img id="imagePreview" src="#" alt="Image Preview" style="max-width: 100%; max-height: 250px; display: none;">
+    </div>
+  </form>
+
+</main>
+
+<script>
+  // Display image preview when a file is selected
+  document.getElementById('imageInput').addEventListener('change', function () {
+    var imagePreview = document.getElementById('imagePreview');
+    imagePreview.style.display = 'block';
+    imagePreview.src = URL.createObjectURL(this.files[0]);
+  });
+</script>
+
+{% include 'inc/footer.html' %}
