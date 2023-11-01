@@ -12,7 +12,7 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     ports:
-      - "5000:5000"
+      - "5050:5000"
 
   data-pipeline:
     build: ./services/data-pipeline/docker-dev
