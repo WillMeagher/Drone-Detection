@@ -2,7 +2,7 @@ import os
 import cv2
 
 from tools import camera_client, speed_test, input_check
-from pipeline import pipeline
+from pipeline import pipeline, pipeline_stereo
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -22,7 +22,7 @@ if DUAL_CAM:
 
 def main():
 
-    speed_tester = speed_test.SpeedTest()
+    speed_tester = speed_test.SpeedTest(loops_per_print=10)
 
     if frame_getter_0.start() and (not DUAL_CAM or frame_getter_1.start()):
         frame_0, frame_1 = None, None
@@ -35,14 +35,15 @@ def main():
 
             if frame_0 is not None and (not DUAL_CAM or frame_1 is not None):
 
-                speed_tester.loop(print_loops=True)
-
-                cv2.imwrite(OUTPUT_FOLDER + "img1.jpg", frame_0)
-
                 if DUAL_CAM:
-                    cv2.imwrite(OUTPUT_FOLDER + "img2.jpg", frame_1)
+                    output_frame = pipeline_stereo([frame_0, frame_1])[0]
+                else:
+                    output_frame = pipeline([frame_0])[0]
+
+                cv2.imwrite(OUTPUT_FOLDER + "img.jpg", output_frame)
 
                 frame_0, frame_1 = None, None
+                speed_tester.loop(print_loops=True)
 
             if input_check.check("q"):
                 break
