@@ -20,6 +20,11 @@ def main():
     server_socket_0.listen(5)
     print(f"Listening on port {PORT_0} ...")
     cap_0 = cv2.VideoCapture(ID_0)
+    
+    # if you want to use a smaller image you need to size it down after you take it. 
+    # If you change these parameters it is just a straight crop
+    cap_0 = cv2.set(3, 1920)
+    cap_0 = cv2.set(4, 1080)
 
     if DUAL_CAM:
         server_socket_1 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -27,6 +32,8 @@ def main():
         server_socket_1.listen(5)
         print(f"Listening on port {PORT_1} ...")
         cap_1 = cv2.VideoCapture(ID_1)
+        cap_1 = cv2.set(3, 1920)
+        cap_1 = cv2.set(4, 1080)
 
     while True:
         client_socket_0, client_address_0 = server_socket_0.accept()
