@@ -21,10 +21,10 @@ services:
       - ./data:/app/data
     tty: true
 
-  opencv-distorition:
-    build: ./services/opencv-distorition/docker-dev
+  opencv-distortion:
+    build: ./services/opencv-distortion/docker-dev
     volumes:
-      - ./services/opencv-distorition/src:/app/src
+      - ./services/opencv-distortion/src:/app/src
       - ./data:/app/data
     entrypoint: ["python", "./src/app.py"]
     tty: true
