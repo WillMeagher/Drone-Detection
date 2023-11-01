@@ -1,0 +1,6 @@
+ipykernel
+flask
+opencv-python
+numpy
+requests
+pyYAML

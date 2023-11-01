@@ -1,0 +1,13 @@
+individual_calibration: False
+stereo_calibration: True
+check_images: True
+check_stereo_images: True
+frame_width: 1920
+frame_height: 1080
+mono_calibration_frames: 10
+stereo_calibration_frames: 10
+view_resize: 2
+checkerboard_box_size_scale : 2.0
+checkerboard_rows: 7
+checkerboard_columns: 9
+cooldown: 20
