@@ -1,19 +1,43 @@
 {% set title='Live Drone Detector' %}
 {% include 'inc/header.html' %}
 
-<main>
-  <form action="/upload_image" method="post" enctype="multipart/form-data">
-    <div class="form-group">
-      <label for="image">Upload Image</label>
-      <input type="file" name="image" accept="image/*" class="form-control-file" id="imageInput">
-    </div>
-    <!-- Image Preview -->
-    <div class="text-center">
-      <img id="imagePreview" src="#" alt="Image Preview" style="max-width: 100%; max-height: 200px; display: none;">
-    </div>
-    <button type="submit" class="btn btn-primary">Upload Image</button>
-  </form>
-</main>
+<style>
+  .button-container {
+    display: flex;
+    justify-content: center;
+  }
 
+  .button-container form {
+    margin-right: 10px;
+  }
+</style>
+
+<main>
+
+  <div class="results" style="margin-bottom: 10px;">
+    Live Feed
+  </div>
+  {% if live_feed == 'true' %}
+  <div class="result-window">
+    <img id="dynamic-image" src="{{ url_for('get_feed') }}"alt="Feed Stopped" class="annotated-image" style="max-width: 100%; max-height: 250px;">
+  </div>
+  {% else %}
+  <div class="result-window" style="max-width: 100%; height: 250px; background-color: rgb(136, 136, 136)";>
+    <div style="text-align: center; font-size: 20px; color: white; margin-top: 100px;">
+      Feed Stopped
+    </div>
+  </div>  
+  {% endif %}
+  
+  <div class="button-container">
+    <form action="/start_feed" method="get">
+      <button type="submit" class="submit">Start</button>
+    </form>
+    <form action="/stop_feed" method="get">
+      <button type="submit" class="submit">Stop</button>
+    </form>
+  </div>
+
+</main>
 
 {% include 'inc/footer.html' %}

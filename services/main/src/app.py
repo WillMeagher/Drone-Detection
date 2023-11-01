@@ -5,22 +5,46 @@ from PIL import Image
 import cv2
 import uuid
 import imageio
+import time
+import os
 
 from pipeline import pipeline
+from live_feed import LiveThread
+
+from dotenv import load_dotenv
+load_dotenv()
 
 app = Flask(__name__)
 
-TEMP_FOLDER = "/app/static/"
+TEMP_FOLDER = os.getenv("APP_DYNAMIC_FOLDER")
+FEED_IMAGE_NAME = os.getenv("FEED_FILE_NAME")
+
 os.makedirs(TEMP_FOLDER, exist_ok=True)
+feed = LiveThread()
 
 
 @app.route('/')
 def index():
     return render_template('image.html')
 
+
 @app.route('/live_feed')
 def liveFeed():
-    return render_template('live_feed.html')
+    return render_template('live_feed.html', live_feed=str(feed.is_running()).lower())
+
+
+@app.route('/start_feed', methods=['POST', 'GET'])
+def start_feed():
+    if not feed.is_running():
+        feed.start_thread()
+    return redirect(url_for('liveFeed'))
+
+
+@app.route('/stop_feed', methods=['POST', 'GET'])
+def stop_feed():
+    if feed.is_running():
+        feed.stop_thread()
+    return redirect(url_for('liveFeed'))
 
 
 @app.route('/upload_image', methods=['POST', 'GET'])
@@ -91,12 +115,34 @@ def upload_video():
 
         return render_template('video.html', video_filename=temp_filename)
 
+def get_frame():
+    while True:
+        time.sleep(0.5)
+        frame = None
+        if feed.is_running():
+            frame = cv2.imread(TEMP_FOLDER + FEED_IMAGE_NAME)
+        if frame is None:
+            frame = cv2.imread('static/404.jpg')
+        yield (b'--frame\r\n'
+            b'Content-Type: image/jpeg\r\n\r\n' + open(TEMP_FOLDER + FEED_IMAGE_NAME, 'rb').read() + b'\r\n')
+
+@app.route('/get_feed')
+def get_feed():
+    response = Response(get_frame(), mimetype='multipart/x-mixed-replace; boundary=frame')
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+    return response
 
 @app.route('/file/<filename>')
 def serve_file(filename):
     file_path = os.path.join(TEMP_FOLDER, filename)
+
+    if not os.path.exists(file_path):
+        return url_for('static', filename='404.jpg')
+
     return send_file(file_path)
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=7007)
+    app.run(debug=True, host='0.0.0.0', port=5000)
