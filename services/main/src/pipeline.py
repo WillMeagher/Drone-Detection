@@ -5,6 +5,7 @@ import cv2
 import numpy as np
 import uuid
 import matplotlib.pyplot as plt
+import math
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -64,6 +65,13 @@ def run_distance(boxes):
 
     return distances
 
+def get_size(width, distance):
+    CAM_WIDTH = 1280 #horizontal resolution in pixels
+    CAM_HFOV = 55 #horizontal FOV in degrees
+    prop = width / 1280
+    total_width = distance * math.tan(CAM_HFOV * math.pi / 180) * 2
+    return total_width * prop
+
 def get_results(img, boxes, results, distances=None):
     cmap = plt.get_cmap('viridis')
     font = cv2.FONT_HERSHEY_SIMPLEX
@@ -73,7 +81,7 @@ def get_results(img, boxes, results, distances=None):
         endPoint = int(box['xyxy'][2]), int(box['xyxy'][3])
 
         drone_type = results[i]['type']['label']
-        drone_weight = results[i]['weight']['label']
+        # drone_weight = results[i]['weight']['label']
 
         color = cmap(box['conf'])
         color = color[2] * 255, color[1] * 255, color[0] * 255
@@ -81,10 +89,13 @@ def get_results(img, boxes, results, distances=None):
         cv2.rectangle(img, startPoint, (startPoint[0] + 200, startPoint[1] - 25), color=color, thickness = -1)
         text = f'Drone - {box["conf"]:.2f}%'
         cv2.putText(img, text, (startPoint[0] + 2, startPoint[1] - 2), font, 0.75, color=(255, 255, 255), bottomLeftOrigin=False, thickness = 2)
-        cv2.putText(img, f'Type - {drone_type}', (startPoint[0] + 2, startPoint[1] + 20), font, 0.75, color=(255, 255, 255), bottomLeftOrigin=False, thickness = 2)
-        cv2.putText(img, f'Weight - {drone_weight}', (startPoint[0] + 2, startPoint[1] + 40), font, 0.75, color=(255, 255, 255), bottomLeftOrigin=False, thickness = 2)
+        cv2.putText(img, f'Type - {drone_type}', (startPoint[0] + 2, endpoint[1] + 20), font, 0.75, color=(255, 255, 255), bottomLeftOrigin=False, thickness = 2)
+        # cv2.putText(img, f'Weight - {drone_weight}', (startPoint[0] + 2, startPoint[1] + 40), font, 0.75, color=(255, 255, 255), bottomLeftOrigin=False, thickness = 2)
         if distances is not None:
-            cv2.putText(img, f'Distance - {distances[i]:.2f}m', (startPoint[0] + 2, startPoint[1] + 60), font, 0.75, color=(255, 255, 255), bottomLeftOrigin=False, thickness = 2)
+            width = int(box['xyxy'][3]) - int(box['xyxy'][1])
+            size = get_size(width, distances[i])
+            cv2.putText(img, f'Distance - {distances[i]:.2f}m', (startPoint[0] + 2, endpoint[1] + 60), font, 0.75, color=(255, 255, 255), bottomLeftOrigin=False, thickness = 2)
+            cv2.putText(img, f'Size - {size:.2f}m', (startPoint[0] + 2, endpoint[1] + 80), font, 0.75, color=(255, 255, 255), bottomLeftOrigin=False, thickness = 2)
 
     return img
 
@@ -101,7 +112,8 @@ def pipeline(imgs):
 
     # run yolo-localization and clip-classifier
     boxes = run_yolo(file_names)
-    types = run_clip(file_names, boxes)
+    # types = run_clip(file_names, boxes)
+    types = [0] * len(boxes)
 
     # annotate images
     results = []
