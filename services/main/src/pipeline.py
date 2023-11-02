@@ -85,17 +85,22 @@ def get_results(img, boxes, results, distances=None):
 
         color = cmap(box['conf'])
         color = color[2] * 255, color[1] * 255, color[0] * 255
+        # bounding box
         cv2.rectangle(img, startPoint, endPoint, color=color, thickness = 2)
+        # drone text background
         cv2.rectangle(img, startPoint, (startPoint[0] + 200, startPoint[1] - 25), color=color, thickness = -1)
+        # extra labels background
+        cv2.rectangle(img, (startPoint[0], endPoint[1]), (startPoint[0] + 400, startPoint[1] - 60), color=color, thickness = -1)
+        
         text = f'Drone - {box["conf"]:.2f}%'
         cv2.putText(img, text, (startPoint[0] + 2, startPoint[1] - 2), font, 0.75, color=(255, 255, 255), bottomLeftOrigin=False, thickness = 2)
-        cv2.putText(img, f'Type - {drone_type}', (startPoint[0] + 2, endpoint[1] + 20), font, 0.75, color=(255, 255, 255), bottomLeftOrigin=False, thickness = 2)
+        cv2.putText(img, f'Type - {drone_type}', (startPoint[0] + 2, endPoint[1] + 20), font, 0.75, color=(255, 255, 255), bottomLeftOrigin=False, thickness = 2)
         # cv2.putText(img, f'Weight - {drone_weight}', (startPoint[0] + 2, startPoint[1] + 40), font, 0.75, color=(255, 255, 255), bottomLeftOrigin=False, thickness = 2)
         if distances is not None:
             width = int(box['xyxy'][3]) - int(box['xyxy'][1])
             size = get_size(width, distances[i])
-            cv2.putText(img, f'Distance - {distances[i]:.2f}m', (startPoint[0] + 2, endpoint[1] + 60), font, 0.75, color=(255, 255, 255), bottomLeftOrigin=False, thickness = 2)
-            cv2.putText(img, f'Size - {size:.2f}m', (startPoint[0] + 2, endpoint[1] + 80), font, 0.75, color=(255, 255, 255), bottomLeftOrigin=False, thickness = 2)
+            cv2.putText(img, f'Distance - {distances[i]:.2f}m', (startPoint[0] + 2, endPoint[1] + 60), font, 0.75, color=(255, 255, 255), bottomLeftOrigin=False, thickness = 2)
+            cv2.putText(img, f'Size - {size:.2f}m', (startPoint[0] + 2, endPoint[1] + 80), font, 0.75, color=(255, 255, 255), bottomLeftOrigin=False, thickness = 2)
 
     return img
 
