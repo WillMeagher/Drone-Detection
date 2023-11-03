@@ -1,5 +1,5 @@
-train: /app/data/yolo/combined
-val: /app/data/yolo/Val
+train: /app/data/yolo/train_combined
+val: /app/data/yolo/val_combined
 
 # number of classes
 nc: 1
