@@ -1,14 +1,12 @@
 from flask import Flask, request
 
-UPLOAD_FOLDER = "/app/data/uploaded/"
-
 # camera constants for distance calc
 CAM_FOCAL_LENGTH = 2000 #in pixels (roughly)
 STEREO_BASELINE = 0.1 #in meteres
 
-DIMENSION_TOLERANCE_PERCENT = 0.2
-HEIGHT_TOLERANCE_PERCENT = 0.5
-WIDTH_TOLERANCE_PERCENT = 0.5
+DIMENSION_TOLERANCE_PERCENT = 1
+HEIGHT_TOLERANCE_PERCENT = 1
+WIDTH_TOLERANCE_PERCENT = 1
 
 app = Flask(__name__)
 
@@ -74,4 +72,4 @@ def test():
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5000)
