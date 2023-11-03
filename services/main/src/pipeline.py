@@ -2,7 +2,6 @@ import requests
 import os
 import json
 import cv2
-import numpy as np
 import uuid
 import matplotlib.pyplot as plt
 import math
@@ -11,7 +10,6 @@ from dotenv import load_dotenv
 load_dotenv()
 
 UPLOAD_FOLDER = "/app/data/uploaded/"
-ANNOTATED_FOLDER = "/app/data/annotated/"
 
 YOLO_ENDPOINT = "http://yolo-localization:5000"
 CLIP_ENDPOINT = "http://clip-classifier:5000"
@@ -68,8 +66,8 @@ def run_distance(boxes):
 def get_size(width, distance):
     CAM_WIDTH = 1280 #horizontal resolution in pixels
     CAM_HFOV = 55 #horizontal FOV in degrees
-    prop = width / 1280
-    total_width = distance * math.tan(CAM_HFOV * math.pi / 180) * 2
+    prop = width / CAM_WIDTH
+    total_width = distance * math.tan((CAM_HFOV / 2) * math.pi / 180) * 2
     return total_width * prop
 
 def get_results(img, boxes, results, distances=None):
@@ -81,7 +79,6 @@ def get_results(img, boxes, results, distances=None):
         endPoint = int(box['xyxy'][2]), int(box['xyxy'][3])
 
         drone_type = results[i]['type']['label']
-        # drone_weight = results[i]['weight']['label']
 
         color = cmap(box['conf'])
         color = color[2] * 255, color[1] * 255, color[0] * 255
@@ -90,7 +87,10 @@ def get_results(img, boxes, results, distances=None):
         # drone text background
         cv2.rectangle(img, startPoint, (startPoint[0] + 200, startPoint[1] - 25), color=color, thickness = -1)
         # extra labels background
-        cv2.rectangle(img, (startPoint[0], endPoint[1]), (startPoint[0] + 400, startPoint[1] - 60), color=color, thickness = -1)
+        if distances is not None:
+            cv2.rectangle(img, (startPoint[0], endPoint[1]), (startPoint[0] + 400, endPoint[1] + 80), color=color, thickness = -1)
+        else:
+            cv2.rectangle(img, (startPoint[0], endPoint[1]), (startPoint[0] + 400, endPoint[1] + 30), color=color, thickness = -1)
         
         text = f'Drone - {box["conf"]:.2f}%'
         cv2.putText(img, text, (startPoint[0] + 2, startPoint[1] - 2), font, 0.75, color=(255, 255, 255), bottomLeftOrigin=False, thickness = 2)
@@ -99,8 +99,8 @@ def get_results(img, boxes, results, distances=None):
         if distances is not None:
             width = int(box['xyxy'][3]) - int(box['xyxy'][1])
             size = get_size(width, distances[i])
-            cv2.putText(img, f'Distance - {distances[i]:.2f}m', (startPoint[0] + 2, endPoint[1] + 60), font, 0.75, color=(255, 255, 255), bottomLeftOrigin=False, thickness = 2)
-            cv2.putText(img, f'Size - {size:.2f}m', (startPoint[0] + 2, endPoint[1] + 80), font, 0.75, color=(255, 255, 255), bottomLeftOrigin=False, thickness = 2)
+            cv2.putText(img, f'Distance - {distances[i]:.2f}m', (startPoint[0] + 2, endPoint[1] + 40), font, 0.75, color=(255, 255, 255), bottomLeftOrigin=False, thickness = 2)
+            cv2.putText(img, f'Size - {size:.2f}m', (startPoint[0] + 2, endPoint[1] + 60), font, 0.75, color=(255, 255, 255), bottomLeftOrigin=False, thickness = 2)
 
     return img
 
@@ -117,8 +117,7 @@ def pipeline(imgs):
 
     # run yolo-localization and clip-classifier
     boxes = run_yolo(file_names)
-    # types = run_clip(file_names, boxes)
-    types = [0] * len(boxes)
+    types = run_clip(file_names, boxes)
 
     # annotate images
     results = []

@@ -12,17 +12,10 @@ clip_model = Clip(MODEL_PATH)
 TYPE_CLASSES = [
     "a quadcopter", 
     "a fixed wing drone", 
-    "a drone with a single propeller", 
-    "many drones"
+    "a hexacopter",
+    "a octocopter",
+    "a drone with more than four propellers",
 ]
-WEIGHT_CLASSES = [
-    "a drone that weighs less than a pound",
-    "a drone that weighs more than a pound but less than five pounds",
-    "a drone that weighs more than a five pounds but less than fifty pounds",
-    "a drone that weighs more than a fifty pounds but less than three hundred pounds",
-    "a drone that weighs more than a three hundred pounds"
-]
-
 
 def get_cropped(img, box):
     startPoint = int(box['xyxy'][0]), int(box['xyxy'][1])
@@ -56,35 +49,27 @@ def run():
     if images_boxes == []:
         images_boxes = [None] * len(img_paths)
 
-    type_values, type_indices, weight_values, weight_indices = [], [], [], []
+    type_values, type_indices = [], []
 
     for i, image_boxes in enumerate(images_boxes):
         type_values.append([])
         type_indices.append([])
-        weight_values.append([])
-        weight_indices.append([])
 
         if image_boxes == None:
             img = all_imgs[i]
 
             type_v, type_i = clip_model.run(img, TYPE_CLASSES)
-            weight_v, weight_i = clip_model.run(img, WEIGHT_CLASSES)
 
             type_values[i].append(type_v)
             type_indices[i].append(type_i)
-            weight_values[i].append(weight_v)
-            weight_indices[i].append(weight_i)
         else:
             for box in image_boxes:
                 cropped_img = get_cropped(all_imgs[i], box)
 
                 type_v, type_i = clip_model.run(cropped_img, TYPE_CLASSES)
-                weight_v, weight_i = clip_model.run(cropped_img, WEIGHT_CLASSES)
 
                 type_values[i].append(type_v)
                 type_indices[i].append(type_i)
-                weight_values[i].append(weight_v)
-                weight_indices[i].append(weight_i)
 
     data = []
     for i in range(len(type_values)):
@@ -95,10 +80,6 @@ def run():
                 "type": {
                     "conf": type_values[i][j][0].item(),
                     "label": TYPE_CLASSES[type_indices[i][j][0]]
-                },
-                "weight": {
-                    "conf": weight_values[i][j][0].item(),
-                    "label": WEIGHT_CLASSES[weight_indices[i][j][0]]
                 }
             })
 
