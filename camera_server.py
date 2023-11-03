@@ -19,20 +19,18 @@ def main():
     server_socket_0.bind((HOST, PORT_0))
     server_socket_0.listen(5)
     print(f"Listening on port {PORT_0} ...")
-    cap_0 = cv2.VideoCapture(ID_0)
-    
-    # explicitely set resolution
-    cap_0 = cv2.set(3, 1280)
-    cap_0 = cv2.set(4, 720)
+    cap_0 = cv2.VideoCapture(ID_0, cv2.CAP_DSHOW)
+    cap_0.set(3, 1280)
+    cap_0.set(4, 720)
 
     if DUAL_CAM:
         server_socket_1 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server_socket_1.bind((HOST, PORT_1))
         server_socket_1.listen(5)
         print(f"Listening on port {PORT_1} ...")
-        cap_1 = cv2.VideoCapture(ID_1)
-        cap_1 = cv2.set(3, 1280)
-        cap_1 = cv2.set(4, 720)
+        cap_1 = cv2.VideoCapture(ID_1, cv2.CAP_DSHOW)
+        cap_1.set(3, 1280)
+        cap_1.set(4, 720)
 
     while True:
         client_socket_0, client_address_0 = server_socket_0.accept()
