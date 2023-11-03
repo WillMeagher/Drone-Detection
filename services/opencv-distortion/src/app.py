@@ -8,9 +8,9 @@ CAM_FOCAL_LENGTH = 2000 #in pixels (roughly)
 STEREO_BASELINE = 0.1 #in meteres
 
 # import the calibration data
-CALIBRATION_VALUES_PATH = "stereo_rectify_maps.xml"
+CALIBRATION_VALUES_PATH = "/app/src/stereo_rectify_maps.xml"
 
-cv_file = cv2.FileStorage("/app/src/stereo_rectify_maps.xml", cv2.FILE_STORAGE_READ)
+cv_file = cv2.FileStorage(CALIBRATION_VALUES_PATH, cv2.FILE_STORAGE_READ)
 LEFT_MAP_X = cv_file.getNode("Left_Stereo_Map_x").mat()
 LEFT_MAP_Y = cv_file.getNode("Left_Stereo_Map_y").mat()
 RIGHT_MAP_X = cv_file.getNode("Right_Stereo_Map_x").mat()
@@ -70,4 +70,4 @@ def test():
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5000)

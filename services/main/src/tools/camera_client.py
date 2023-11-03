@@ -3,7 +3,6 @@ import cv2
 import os
 import numpy as np
 import threading
-import time
 
 from dotenv import load_dotenv
 load_dotenv()

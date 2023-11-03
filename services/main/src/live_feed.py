@@ -1,6 +1,6 @@
 import os
 import threading
-from tools import camera_client, speed_test
+from tools import camera_client
 from pipeline import pipeline, pipeline_stereo
 import cv2
 import requests
