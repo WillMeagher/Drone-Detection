@@ -47,6 +47,7 @@ def start_feed():
 
 @app.route('/stop_feed', methods=['POST', 'GET'])
 def stop_feed():
+    global frame
     frame = EMPTY_FRAME
     if feed.is_running():
         feed.stop_thread()

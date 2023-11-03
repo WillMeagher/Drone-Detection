@@ -14,7 +14,8 @@ PORT_1 = int(os.getenv("CAM_PORT_1"))
 HOST = os.getenv("DOCKER_INTERNAL_HOST")
 
 TEMP_FOLDER = os.getenv("APP_DYNAMIC_FOLDER")
-IMAGE_NAME = os.getenv("FEED_FILE_NAME")
+
+POST_URL = "http://localhost:5000/get-feed"
 
 class LiveThread:
     def __init__(self):
@@ -31,7 +32,7 @@ class LiveThread:
             self.frame_getter_0 = camera_client.FrameCapture(PORT_0, HOST)
             if DUAL_CAM:
                 self.frame_getter_1 = camera_client.FrameCapture(PORT_1, HOST)
-            
+
             if self.frame_getter_0.start() and (not DUAL_CAM or self.frame_getter_1.start()):
                 self.thread.start()
             else:
@@ -45,9 +46,6 @@ class LiveThread:
             self.frame_getter_0.stop()
         if DUAL_CAM and self.frame_getter_1.is_running():
             self.frame_getter_1.stop()
-
-        if os.path.exists(TEMP_FOLDER + IMAGE_NAME):
-            os.remove(TEMP_FOLDER + IMAGE_NAME)
     
     def is_running(self):
         return self.running
@@ -69,12 +67,10 @@ class LiveThread:
                     output_frame = pipeline([frame_0])[0]
 
                 frame_0, frame_1 = None, None
-
-                cv2.imwrite(TEMP_FOLDER + IMAGE_NAME, output_frame)
                 
                 ret_, encoded_img = cv2.imencode('.jpg', output_frame)
                 img_string = encoded_img.tobytes()
-                requests.post('http://localhost:5000/get-feed', data=img_string)
+                requests.post(POST_URL, data=img_string)
 
 
 if __name__ == "__main__":
