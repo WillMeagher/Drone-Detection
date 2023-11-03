@@ -14,13 +14,6 @@ services:
     ports:
       - "5050:5000"
 
-  data-pipeline:
-    build: ./services/data-pipeline/docker-dev
-    volumes:
-      - ./services/data-pipeline/src:/app/src
-      - ./data:/app/data
-    tty: true
-
   opencv-distortion:
     build: ./services/opencv-distortion/docker-dev
     volumes:
@@ -44,6 +37,7 @@ services:
       - ./data:/app/data
     entrypoint: ["python", "./src/app.py"]
     tty: true
+    ipc: host
     deploy:
       resources:
         reservations:
