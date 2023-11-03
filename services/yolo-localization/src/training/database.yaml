@@ -1,0 +1,10 @@
+train: /app/data/yolo/combined
+val: /app/data/yolo/Val
+
+# number of classes
+nc: 1
+
+# class names
+names: [
+  "drone"
+]

@@ -3,10 +3,11 @@ from ultralytics import YOLO
 from PIL import Image
 import os
 
-MODEL_PATH = '/app/src/models/yolov8n_some_trainging.pt'
+MODEL_PATH = '/app/src/models/yolov8s_20_epochs.pt'
 yolo_model = YOLO(MODEL_PATH)
 
 app = Flask(__name__)
+
 
 @app.route("/", methods = ['GET'])
 def run():
@@ -38,9 +39,11 @@ def run():
     
     return data
 
+
 @app.route("/test")
 def test():
     return 'Server is Live'
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)

@@ -1,0 +1,2 @@
+database_0 is made up of images and labels from the dataset provided by the challenge organizers
+database_1 is made up of images and labels from https://www.kaggle.com/datasets/sshikamaru/drone-yolo-detection
