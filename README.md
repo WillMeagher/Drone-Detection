@@ -71,10 +71,7 @@ The below results are all from images and videos not seen at training time.
 <img src="media/Demo_Img_3.png" alt="Demo Image 3" width="500">
 
 ## Video Outputs
-<video width="500" controls>
-  <source src="media/Demo_Video.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+https://github.com/WillMeagher/Drone-Detection/assets/51809599/5101dc29-fbd1-4a43-a579-084c46915f79
 
 ## Stereo Image Outputs
 
